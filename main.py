@@ -22,7 +22,7 @@ class Check(StatesGroup):
 
 
 @dp.message_handler(content_types=["new_chat_members"], state='*')
-async def handler_new_member(message: types.Message, state: FSMContext):
+async def new_member_handler(message: types.Message, state: FSMContext):
     question, answer = make_question()
     bot_message = await message.reply_photo(make_image(question, TIME), reply_markup=types.ForceReply(selective=True))
     await state.update_data(answer=answer, bot_message=bot_message)
@@ -38,7 +38,7 @@ async def handler_new_member(message: types.Message, state: FSMContext):
 
 
 @dp.message_handler(state=Check.check)
-async def handler_new_member(message: types.Message, state: FSMContext):
+async def answer_handler(message: types.Message, state: FSMContext):
     data = await state.get_data()
     if str(data['answer']) not in message.text:
         await kick_user(message.chat, message.from_user)
